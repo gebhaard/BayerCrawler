@@ -7,7 +7,7 @@ from datetime import datetime
 
 # input to choose project you want to scrape
 
-with open('projects.json', 'r', encoding='utf-8') as f:
+with open('../projects.json', 'r', encoding='utf-8') as f:
     project_dict = json.load(f)
     f.close()
 
