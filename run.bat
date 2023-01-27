@@ -5,4 +5,4 @@ pip install -r requirements.txt
 echo Dependencies installed.
 
 echo Running crawler...
-python ./bin/BayerPropertyCrawler.py
+python .\bin\BayerPropertyCrawler.py
