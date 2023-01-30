@@ -13,5 +13,10 @@
             "url": "https://bayerproperty.com/lakoprojektek/budapest-xvi/zoldmezo-lakopark",
             "short": "ZL",
             "merger": "Zöldmező Lakópark "
+    },
+    "VABA Apartments": {
+            "url": "https://bayerproperty.com/lakoprojektek/budapest-xi/vaba-apartments",
+            "short": "VABA",
+            "merger": "VABA Apartments "
     }
 }
