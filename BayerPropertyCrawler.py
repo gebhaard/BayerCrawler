@@ -1,10 +1,10 @@
-import requests
 import json
-import pandas as pd
-from bs4 import BeautifulSoup
 from collections import defaultdict
 from datetime import datetime
 
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
 
 with open('projects.json', 'r', encoding='utf-8') as f:
     project_dict = json.load(f)
@@ -42,7 +42,7 @@ ran = range(len(soup.find_all('meta', attrs={'itemprop': 'position'})))
 name = soup.find_all('meta', attrs={'itemprop': 'name'})
 name = [name[i]['content'].replace(merger, '') for i in ran]
 image = soup.find_all('meta', attrs={'itemprop': 'image'})
-image = [image[i]['content'] for i in ran]
+image = [image[i]['content'] if i < len(image) else None for i in ran]
 
 attr = soup.find_all('span', attrs={'class': 'home-attribute'})
 val = soup.find_all('span', attrs={'class': 'home-value'})
