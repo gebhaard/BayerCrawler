@@ -1,4 +1,5 @@
 import json
+import os
 from collections import defaultdict
 from datetime import datetime
 
@@ -75,7 +76,9 @@ df_final = pd.merge(df, df2, left_on='Lakás', right_on='name', how='left')
 
 # drop name column
 df_final.drop('name', axis=1, inplace=True)
+df_final['Kép link'] = '=HYPERLINK("' + df_final['Kép link'] + '")'
 
 datetime_now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+os.makedirs('export', exist_ok=True)
 df_final.to_excel(
-    f'BayerProperty_{short}_Export_{datetime_now}.xlsx', index=False)
+    f'export/BayerProperty_{short}_Export_{datetime_now}.xlsx', index=False)
