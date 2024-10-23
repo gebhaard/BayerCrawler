@@ -48,20 +48,17 @@ image = [image[i]['content'] if i < len(image) else None for i in ran]
 attr = soup.find_all('span', attrs={'class': 'home-attribute'})
 val = soup.find_all('span', attrs={'class': 'home-value'})
 
-attr_ = [attr[i].text for i in range(len(attr))]
-val_ = [val[i].text for i in range(len(val))]
-
-temp_list = []
-for idx, el in enumerate(val_):
-    if short in el:
-        id = el
-    else:
-        temp_list.append({id: {attr_[idx]: val_[idx]}})
+attr_ = [a.text for a in attr]
+val_ = [v.text for v in val]
 
 result = defaultdict(dict)
-for d in temp_list:
-    for key, value in d.items():
-        result[key].update(value)
+current_key = None
+
+for i in range(len(attr_)):
+    if attr_[i] == "Lakásszám":
+        current_key = val_[i]
+    elif current_key:
+        result[current_key][attr_[i]] = val_[i]
 
 df = pd.DataFrame.from_dict(result, orient='index').reset_index(names='Lakás')
 df['Ára'] = df['Ára'].fillna('Foglalt/Eladva')
