@@ -47,10 +47,24 @@ image = [image[i]['content'] if i < len(image) else None for i in ran]
 
 attr = soup.find_all('span', attrs={'class': 'home-attribute'})
 val = soup.find_all('span', attrs={'class': 'home-value'})
+res = soup.find_all('div', attrs={'class': 'col-md-2'})
+
+attr = soup.find_all('span', attrs={'class': 'home-attribute'})
+val = soup.find_all('span', attrs={'class': 'home-value'})
+res = soup.find_all('div', attrs={'class': 'col-md-2'})
 
 attr_ = [a.text for a in attr]
 val_ = [v.text for v in val]
+filtered_divs = [
+    div for div in res
+    if not div.find('div', class_='row flat-gallery')
+]
+res_ = [
+    div.find('span').get_text(strip=True) for div in filtered_divs
+    if div.find('span') and div.find('span').get_text(strip=True)
+]
 
+res_ = [status if status != 'Ára' else "Elérhető" for status in res_]
 result = defaultdict(dict)
 current_key = None
 
@@ -60,8 +74,10 @@ for i in range(len(attr_)):
     elif current_key:
         result[current_key][attr_[i]] = val_[i]
 
+for idx, lakas in enumerate(result):
+    result[lakas]['Állapot'] = res_[idx]
+
 df = pd.DataFrame.from_dict(result, orient='index').reset_index(names='Lakás')
-df['Ára'] = df['Ára'].fillna('Foglalt/Eladva')
 df['Ára'] = df['Ára'].str.replace(' Ft', '')
 df['Méret'] = df['Méret'].str.replace(' m2', '')
 df['Terasz'] = df['Terasz'].str.replace(' m2', '')
