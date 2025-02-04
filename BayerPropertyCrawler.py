@@ -63,63 +63,72 @@ soup = BeautifulSoup(r, "html.parser")
 cards = soup.find_all("article", class_="w-grid-item")
 data = []
 
-for card in cards[:-1]:
-    azonosito = (
-        card.find(
-            "div", class_=re.compile(r"\bw-post-elm\b.*\busg_post_custom_field_7\b")
+for idx, card in enumerate(cards):
+    if not re.search(r"\bingatlan\b", card["class"][3]):
+        continue
+    print(f"Processing card {idx + 1} of {len(cards)}...", end="\r")
+    try:
+        azonosito = (
+            card.find(
+                "div", class_=re.compile(r"\bw-post-elm\b.*\busg_post_custom_field_7\b")
+            )
+            .find("span", class_=re.compile(r"\bw-post-elm-value\b"))
+            .text.strip()
         )
-        .find("span", class_=re.compile(r"\bw-post-elm-value\b"))
-        .text.strip()
-    )
-    szobak = (
-        card.find(
-            "div", class_=re.compile(r"\bw-post-elm\b.*\busg_post_custom_field_4\b")
+        szobak = (
+            card.find(
+                "div", class_=re.compile(r"\bw-post-elm\b.*\busg_post_custom_field_4\b")
+            )
+            .find("span", class_=re.compile(r"\bw-post-elm-value\b"))
+            .text.strip()
         )
-        .find("span", class_=re.compile(r"\bw-post-elm-value\b"))
-        .text.strip()
-    )
-    ar = (
-        card.find(
-            "div", class_=re.compile(r"\bw-post-elm\b.*\busg_post_custom_field_3\b")
+        ar = (
+            card.find(
+                "div", class_=re.compile(r"\bw-post-elm\b.*\busg_post_custom_field_3\b")
+            )
+            .find("span", class_=re.compile(r"\bw-post-elm-value\b"))
+            .text.strip()
         )
-        .find("span", class_=re.compile(r"\bw-post-elm-value\b"))
-        .text.strip()
-    )
-    terulet = (
-        card.find(
-            "div", class_=re.compile(r"\bw-post-elm\b.*\busg_post_custom_field_5\b")
+        terulet = (
+            card.find(
+                "div", class_=re.compile(r"\bw-post-elm\b.*\busg_post_custom_field_5\b")
+            )
+            .find("span", class_=re.compile(r"\bw-post-elm-value\b"))
+            .text.strip()
         )
-        .find("span", class_=re.compile(r"\bw-post-elm-value\b"))
-        .text.strip()
-    )
-    emelet = (
-        card.find(
-            "div", class_=re.compile(r"\bw-post-elm\b.*\busg_post_custom_field_6\b")
+        emelet = (
+            card.find(
+                "div", class_=re.compile(r"\bw-post-elm\b.*\busg_post_custom_field_6\b")
+            )
+            .find("span", class_=re.compile(r"\bw-post-elm-value\b"))
+            .text.strip()
         )
-        .find("span", class_=re.compile(r"\bw-post-elm-value\b"))
-        .text.strip()
-    )
-    img_tag = card.find(
-        "img",
-        class_=re.compile(r"\battachment-large\b.*\bsize-large\b.*\bwp-post-image\b"),
-    )
-    if img_tag:
-        img_link = img_tag["src"]
-        if img_link.startswith("data:image/svg+xml"):
-            img_link = img_tag.get("data-lazy-src", img_link)
-    else:
-        img_link = "None"
+        img_tag = card.find(
+            "img",
+            class_=re.compile(
+                r"\battachment-large\b.*\bsize-large\b.*\bwp-post-image\b"
+            ),
+        )
+        if img_tag:
+            img_link = img_tag["src"]
+            if img_link.startswith("data:image/svg+xml"):
+                img_link = img_tag.get("data-lazy-src", img_link)
+        else:
+            img_link = "None"
 
-    data.append(
-        {
-            "Azonosító": azonosito,
-            "Szobák": szobak,
-            "Ár": ar,
-            "Terület": terulet,
-            "Emelet": emelet,
-            "Kép link": '=HYPERLINK("' + img_link + '")',
-        }
-    )
+        data.append(
+            {
+                "Azonosító": azonosito,
+                "Szobák": szobak,
+                "Ár": ar,
+                "Terület": terulet,
+                "Emelet": emelet,
+                "Kép link": '=HYPERLINK("' + img_link + '")',
+            }
+        )
+    except Exception as e:
+        print(f"Error processing card {idx + 1}: {e}")
+        continue
 
 # Convert to DataFrame
 df = pd.DataFrame(data)
