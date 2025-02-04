@@ -127,5 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-test_nb.ipynb
+main.ipynb
 *.xlsx
